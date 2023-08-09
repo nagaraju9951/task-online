@@ -5,7 +5,7 @@ pipeline {
         // Stage 1: Checkout
         stage('Checkout') {
             steps {
-                checkout scm
+                 git credentialsId: 'naga-ca-git', branch: 'master', url: 'https://github.com/nagaraju9951/task-online.git'
             }
         }
 
