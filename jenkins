@@ -2,28 +2,28 @@ pipeline {
     agent any
 
     stages {
+        // Stage 1: Checkout
         stage('Checkout') {
             steps {
-                git credentialsId: 'naga-ca-git', branch: 'master', url: 'https://github.com/nagaraju9951/task-online.git'
+                 git credentialsId: 'naga-ca-git', branch: 'master', url: 'https://github.com/nagaraju9951/task-online.git'
             }
         }
 
+      // Stage 2: Build Docker Image
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    # Install Docker
-                    curl -fsSL https://get.docker.com -o get-docker.sh
-                    sh get-docker.sh
-
+                    ansible-playbook -i inventory python-deploy.yml
                     # Build Docker image
-                    docker build -t my-python-app .
+                    docker build -t hello-world-app .
                 '''
             }
         }
 
-        stage('Deploy using Ansible') {
+        // Stage 3: Run Docker Container
+        stage('Run Docker Container') {
             steps {
-                sh 'ansible-playbook -i inventory python-deploy.yml'
+                sh 'docker run -p 8080:80 hello-world-app'
             }
         }
     }
