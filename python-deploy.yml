@@ -1,0 +1,19 @@
+---
+- name: Deploy Python App to Host
+  hosts: webservers  # Replace with your host or host group
+  become: yes
+
+  tasks:
+    - name: Copy files to host
+      copy:
+        src: /home/nagaraju/task/
+        dest: /home/ubuntu/
+        remote_src: yes
+
+    - name: Install Python packages
+      pip:
+        requirements: /home/ubuntu/requirements.txt
+        executable: /usr/bin/python3
+
+    - name: Run Python App
+      shell: /usr/bin/python3 /home/ubuntu/app.py
