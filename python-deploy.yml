@@ -17,3 +17,4 @@
 
     - name: Run Python App
       shell: /usr/bin/python3 /home/ubuntu/app.py
+
