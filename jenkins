@@ -5,21 +5,36 @@ pipeline {
         // Stage 1: Checkout
         stage('Checkout') {
             steps {
-                 git credentialsId: 'naga-ca-git', branch: 'master', url: 'https://github.com/nagaraju9951/task-online.git'
+                git credentialsId: 'naga-ca-git', branch: 'master', url: 'https://github.com/nagaraju9951/task-online.git'
             }
         }
 
-      // Stage 2: Build Docker Image
+        // Stage 2: Set Docker Permissions
+        stage('Set Docker Permissions') {
+            steps {
+                sh '''
+                    sudo usermod -aG docker jenkins
+                    sudo chown root:docker /var/run/docker.sock
+                    sudo chmod 660 /var/run/docker.sock
+                '''
+            }
+        }
+
+        // Stage 3: Build Docker Image
         stage('Build Docker Image') {
             steps {
                 sh '''
+                    # Install Docker (if needed)
+                    curl -fsSL https://get.docker.com -o get-docker.sh
+                    sh get-docker.sh
+
                     # Build Docker image
                     docker build -t hello-world-app .
                 '''
             }
         }
 
-        // Stage 3: Run Docker Container
+        // Stage 4: Run Docker Container
         stage('Run Docker Container') {
             steps {
                 sh 'docker run -p 8080:80 hello-world-app'
