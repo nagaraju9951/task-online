@@ -2,40 +2,28 @@ pipeline {
     agent any
 
     stages {
-        // Stage 1: Checkout
         stage('Checkout') {
             steps {
                 git credentialsId: 'naga-ca-git', branch: 'master', url: 'https://github.com/nagaraju9951/task-online.git'
             }
         }
 
-       stage('Set Docker Permissions') {
-    steps {
-        sh 'usermod -aG docker jenkins'
-        sh 'chown root:docker /var/run/docker.sock'
-        sh 'chmod 660 /var/run/docker.sock'
-         }
-       }
-
-
-        // Stage 3: Build Docker Image
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    # Install Docker (if needed)
+                    # Install Docker
                     curl -fsSL https://get.docker.com -o get-docker.sh
                     sh get-docker.sh
 
                     # Build Docker image
-                    docker build -t hello-world-app .
+                    docker build -t my-python-app .
                 '''
             }
         }
 
-        // Stage 4: Run Docker Container
-        stage('Run Docker Container') {
+        stage('Deploy using Ansible') {
             steps {
-                sh 'docker run -p 8080:80 hello-world-app'
+                sh 'ansible-playbook -i inventory python-deploy.yml'
             }
         }
     }
