@@ -9,16 +9,14 @@ pipeline {
             }
         }
 
-        // Stage 2: Set Docker Permissions
-        stage('Set Docker Permissions') {
-            steps {
-                sh '''
-                    sudo usermod -aG docker jenkins
-                    sudo chown root:docker /var/run/docker.sock
-                    sudo chmod 660 /var/run/docker.sock
-                '''
-            }
-        }
+       stage('Set Docker Permissions') {
+    steps {
+        sh 'usermod -aG docker jenkins'
+        sh 'chown root:docker /var/run/docker.sock'
+        sh 'chmod 660 /var/run/docker.sock'
+         }
+       }
+
 
         // Stage 3: Build Docker Image
         stage('Build Docker Image') {
