@@ -1,27 +1,32 @@
 pipeline {
     agent any
 
-    environment {
-        SSH_PRIVATE_KEY = credentials('your-ssh-private-key-credential-id')
-    }
-
     stages {
+        // Stage 1: Checkout
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Deploy to Remote Host') {
+        // Stage 2: Build Docker Image
+        stage('Build Docker Image') {
             steps {
-                script {
-                    sshagent(credentials: ['${SSH_PRIVATE_KEY}']) {
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY app.py Dockerfile inventory python-deploy.yml xportmrequirements.txt remoteuser@your_host:/path/on/remote/server/
-                            ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY remoteuser@your_host 'cd /path/on/remote/server && python3 app.py'
-                        """
-                    }
-                }
+                sh '''
+                    # Install Docker
+                    curl -fsSL https://get.docker.com -o get-docker.sh
+                    sh get-docker.sh
+
+                    # Build Docker image
+                    docker build -t hello-world-app .
+                '''
+            }
+        }
+
+        // Stage 3: Run Docker Container
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker run -p 8080:80 hello-world-app'
             }
         }
     }
