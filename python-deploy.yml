@@ -7,8 +7,8 @@
     - name: Copy files to host
       copy:
         src: /home/nagaraju/task/
-        dest: /home/ubuntu/
-        remote_src: yes
+        dest: /home/ubuntu
+        remote_src: no
 
     - name: Install Python packages
       pip:
