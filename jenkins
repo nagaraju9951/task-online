@@ -14,7 +14,7 @@ pipeline {
             steps {
                 sh '''
                     # Install Docker
-                    curl -fsSL https://get.docker.com -o get-docker.sh
+                    sudo apt install docker.io
                     sh get-docker.sh
 
                     # Build Docker image
